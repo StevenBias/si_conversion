@@ -13,6 +13,7 @@ const Units = enum(u8) {
     celsius = 4,
     feet = 5,
     centimeters = 6,
+    yards = 7,
     max
 };
 
@@ -66,12 +67,24 @@ fn new_unit(unit: Units) Unit_t {
                 .conv_symbol = "ft",
             };
         },
+        Units.yards => {
+            return Unit_t {
+                .unit = unit,
+                .symbol = "yd",
+                .conv_symbol = "m",
+            };
+        },
         else => unreachable,
     }
 }
 
 const lb_kg_conversion = 0.45359237;
 const ft_cm_conversion = 30.48;
+const yt_m_conversion = 0.9144;
+
+fn yards_to_meters(yards: f32) f32 {
+    return (yards * yt_m_conversion);
+}
 
 fn centimeters_to_feet(centimeters: f32) f32 {
     return (centimeters / ft_cm_conversion) ;
@@ -131,6 +144,9 @@ fn convert(sel: u8) !void {
             Units.centimeters => {
                 out_val = centimeters_to_feet(in_val);
             },
+            Units.yards => {
+                out_val = yards_to_meters(in_val);
+            },
             else => unreachable,
         }
 
@@ -152,6 +168,7 @@ pub fn main() !void {
         \\[4] - celsius to fahrenheit
         \\[5] - feet to centimeters
         \\[6] - centimeters to feet
+        \\[7] - yards to meters
         \\
     });
 
