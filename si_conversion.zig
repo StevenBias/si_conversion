@@ -1,5 +1,7 @@
 const std = @import("std");
 
+const floatMax = std.math.floatMax(f32);
+
 // Add a writter to stdout
 const stdout = std.io.getStdOut().writer();
 const stdin = std.io.getStdIn().reader();
@@ -8,6 +10,7 @@ const Units = enum(u8) {
     pounds = 1,
     kilograms = 2,
     fahrenheit = 3,
+    celsius = 4,
     max
 };
 
@@ -40,11 +43,22 @@ fn new_unit(unit: Units) Unit_t {
                 .conv_symbol = "°C",
             };
         },
+        Units.celsius => {
+            return Unit_t {
+                .unit = unit,
+                .symbol = "°C",
+                .conv_symbol = "°F",
+            };
+        },
         else => unreachable,
     }
 }
 
 const lb_kg_conversion = 0.45359237;
+
+fn celsius_to_fahrenheit(cels: f32) f32 {
+    return (cels * (9.0 / 5.0) + 32) ;
+}
 
 fn fahrenheit_to_celsius(fahr: f32) f32 {
     return (fahr - 32) * (5.0 / 9.0);
@@ -68,9 +82,9 @@ fn convert(sel: u8) !void {
 
     var input: [20]u8 = undefined;
     const in = try stdin.readUntilDelimiter(&input, '\n');
-    const in_val = std.fmt.parseFloat(f32, in) catch -1;
+    const in_val = std.fmt.parseFloat(f32, in) catch floatMax;
 
-    if (in_val != -1) {
+    if (in_val != floatMax) {
         var out_val: f32 = undefined;
 
         switch (unit.unit) {
@@ -82,6 +96,9 @@ fn convert(sel: u8) !void {
             },
             Units.fahrenheit => {
                 out_val = fahrenheit_to_celsius(in_val);
+            },
+            Units.celsius => {
+                out_val = celsius_to_fahrenheit(in_val);
             },
             else => unreachable,
         }
@@ -101,6 +118,7 @@ pub fn main() !void {
         \\[1] - pounds to kilograms
         \\[2] - kilograms to pounds
         \\[3] - fahrenheit to celsius
+        \\[4] - celsius to fahrenheit
         \\
     });
 
