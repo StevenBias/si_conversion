@@ -2,5 +2,6 @@ const std = @import("std");
 
 pub fn main() !void {
     const stdout = std.io.getStdOut().writer();
-    try stdout.print("{s}", .{"Hello, World!\n"});
+    const args = try std.process.argsAlloc(std.heap.page_allocator);
+    try stdout.print("{s}, {s}!\n", .{args[1], "World"});
 }
