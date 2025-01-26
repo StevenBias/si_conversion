@@ -13,5 +13,7 @@ pub fn main() !void {
     if (args.len != 2) return error.ExpectedArgument;
 
     const pounds = try std.fmt.parseFloat(f32, args[1]);
-    try stdout.print("{} lb\n", .{pounds});
+    const kilos = pounds * 0.45359237;
+
+    try stdout.print("{d} lb = {d} kg\n", .{pounds, kilos});
 }
