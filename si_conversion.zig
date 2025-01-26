@@ -1,8 +1,13 @@
 const std = @import("std");
 
+// Add a writter to stdout
+const stdout = std.io.getStdOut().writer();
+const stdin = std.io.getStdIn().reader();
+
 const Units = enum(u8) {
     pounds = 1,
     kilograms = 2,
+    max
 };
 
 const Unit_t = struct {
@@ -30,11 +35,22 @@ fn pounds_to_kilos(pounds: f32) f32 {
     return pounds * lb_kg_conversion;
 }
 
-pub fn main() !void {
-    // Add a writter to stdout
-    const stdout = std.io.getStdOut().writer();
-    const stdin = std.io.getStdIn().reader();
+fn convert(unit: u8) !void {
 
+    const ttt = new_unit(@enumFromInt(unit));
+    try stdout.print("\nPlease enter a value in {s}: ", .{@tagName(ttt.unit)});
+
+    var input: [20]u8 = undefined;
+    const in = try stdin.readUntilDelimiter(&input, '\n');
+    const pounds = try std.fmt.parseFloat(f32, in);
+
+    const kilos = pounds_to_kilos(pounds);
+
+    try stdout.print("\n{s}\n", .{ttt.symbol});
+    try stdout.print("\n{d} {s} = {d:.3} {s}\n", .{pounds, ttt.symbol, kilos, ttt.conv_symbol});
+}
+
+pub fn main() !void {
     try stdout.print("{s}\n", .{
         \\Select the unit you want to convert:
         \\
@@ -42,26 +58,12 @@ pub fn main() !void {
         \\
     });
 
-    var ttt: Unit_t = undefined;
     var input_unit: [3]u8 = undefined;
     const in_unit = try stdin.readUntilDelimiter(&input_unit, '\n');
-    const unit = try std.fmt.parseInt(u8, in_unit, 10);
+    const unit: u8 = try std.fmt.parseInt(u8, in_unit, 10);
 
-    switch (unit) {
-        @intFromEnum(Units.pounds) => {
-            ttt = new_unit(Units.pounds);
-            try stdout.print("\nPlease enter a value in {s}: ", .{@tagName(ttt.unit)});
-
-            var input: [20]u8 = undefined;
-            const in = try stdin.readUntilDelimiter(&input, '\n');
-            const pounds = try std.fmt.parseFloat(f32, in);
-
-            const kilos = pounds_to_kilos(pounds);
-
-            try stdout.print("\n{s}\n", .{ttt.symbol});
-            try stdout.print("\n{d} {s} = {d:.3} {s}\n", .{pounds, ttt.symbol, kilos, ttt.conv_symbol});
-        },
-        else => {},
+    if (unit < @intFromEnum(Units.max)) {
+        try convert (unit);
     } 
 
     try stdout.print("{s}\n", .{"ByeBye!"});
