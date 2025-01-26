@@ -16,6 +16,7 @@ const Units = enum(u8) {
     yards = 7,
     meters = 8,
     miles = 9,
+    kilometers = 10,
     max
 };
 
@@ -90,6 +91,13 @@ fn new_unit(unit: Units) Unit_t {
                 .conv_symbol = "km",
             };
         },
+        Units.kilometers => {
+            return Unit_t {
+                .unit = unit,
+                .symbol = "km",
+                .conv_symbol = "mi",
+            };
+        },
         else => unreachable,
     }
 }
@@ -98,6 +106,10 @@ const lb_kg_conversion = 0.45359237;
 const ft_cm_conversion = 30.48;
 const yt_m_conversion = 0.9144;
 const mi_km_conversion = 1.609344;
+
+fn kilometers_to_miles(km: f32) f32 {
+    return (km / mi_km_conversion);
+}
 
 fn miles_to_kilometers(miles: f32) f32 {
     return (miles * mi_km_conversion);
@@ -178,6 +190,9 @@ fn convert(sel: u8) !void {
             Units.miles => {
                 out_val = miles_to_kilometers(in_val);
             },
+            Units.kilometers => {
+                out_val = kilometers_to_miles(in_val);
+            },
             else => unreachable,
         }
 
@@ -193,15 +208,16 @@ pub fn main() !void {
     try stdout.print("{s}\n", .{
         \\Select the unit you want to convert:
         \\
-        \\[1] - pounds to kilograms
-        \\[2] - kilograms to pounds
-        \\[3] - fahrenheit to celsius
-        \\[4] - celsius to fahrenheit
-        \\[5] - feet to centimeters
-        \\[6] - centimeters to feet
-        \\[7] - yards to meters
-        \\[8] - meters to yards
-        \\[9] - miles to kilometers
+        \\[1]  - pounds to kilograms
+        \\[2]  - kilograms to pounds
+        \\[3]  - fahrenheit to celsius
+        \\[4]  - celsius to fahrenheit
+        \\[5]  - feet to centimeters
+        \\[6]  - centimeters to feet
+        \\[7]  - yards to meters
+        \\[8]  - meters to yards
+        \\[9]  - miles to kilometers
+        \\[10] - kilometers to miles
         \\
     });
 
