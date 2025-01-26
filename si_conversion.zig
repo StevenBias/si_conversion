@@ -56,20 +56,27 @@ fn convert(sel: u8) !void {
 
     var input: [20]u8 = undefined;
     const in = try stdin.readUntilDelimiter(&input, '\n');
-    const in_val = try std.fmt.parseFloat(f32, in);
-    var out_val: f32 = undefined;
+    const in_val = std.fmt.parseFloat(f32, in) catch -1;
 
-    switch (unit.unit) {
-        Units.pounds => {
-            out_val = pounds_to_kilos(in_val);
-        },
-        Units.kilograms => {
-            out_val = kilos_to_pounds(in_val);
-        },
-        else => unreachable,
+    if (in_val != -1) {
+        var out_val: f32 = undefined;
+
+        switch (unit.unit) {
+            Units.pounds => {
+                out_val = pounds_to_kilos(in_val);
+            },
+            Units.kilograms => {
+                out_val = kilos_to_pounds(in_val);
+            },
+            else => unreachable,
+        }
+
+        try stdout.print("\n{d} {s} = {d:.3} {s}\n", .{in_val, unit.symbol, out_val, unit.conv_symbol});
+    } 
+    else {
+        try stdout.print("{s}\n", .{"Sorry, invalid input."});
     }
 
-    try stdout.print("\n{d} {s} = {d:.3} {s}\n", .{in_val, unit.symbol, out_val, unit.conv_symbol});
 }
 
 pub fn main() !void {
@@ -81,13 +88,16 @@ pub fn main() !void {
         \\
     });
 
-    var input_unit: [3]u8 = undefined;
+    var input_unit: [10]u8 = undefined;
     const in_unit = try stdin.readUntilDelimiter(&input_unit, '\n');
-    const sel: u8 = try std.fmt.parseInt(u8, in_unit, 10);
+    const sel: u8 = std.fmt.parseInt(u8, in_unit, 10) catch @intFromEnum(Units.max);
 
-    if (sel < @intFromEnum(Units.max)) {
+    if (sel > 0 and sel < @intFromEnum(Units.max)) {
         try convert (sel);
     } 
+    else {
+        try stdout.print("{s}\n", .{"Sorry, invalid input."});
+    }
 
     try stdout.print("{s}\n", .{"ByeBye!"});
 }
