@@ -20,9 +20,16 @@ fn new_unit(unit: Units) Unit_t {
     switch(unit) {
         Units.pounds => {
             return Unit_t {
-                .unit = Units.pounds,
+                .unit = unit,
                 .symbol = "lb",
                 .conv_symbol = "kg",
+            };
+        },
+        Units.kilograms => {
+            return Unit_t {
+                .unit = unit,
+                .symbol = "kg",
+                .conv_symbol = "lb",
             };
         },
         else => unreachable,
@@ -31,23 +38,38 @@ fn new_unit(unit: Units) Unit_t {
 
 const lb_kg_conversion = 0.45359237;
 
+fn kilos_to_pounds(kilos: f32) f32 {
+    return (kilos / lb_kg_conversion);
+}
+
 fn pounds_to_kilos(pounds: f32) f32 {
     return pounds * lb_kg_conversion;
 }
 
-fn convert(unit: u8) !void {
+// @brief Function to initial the correct structure accordind 'sel' choosed by
+//        the user, get the value to be converted, do the conversion and print
+//        the result
+fn convert(sel: u8) !void {
 
-    const ttt = new_unit(@enumFromInt(unit));
-    try stdout.print("\nPlease enter a value in {s}: ", .{@tagName(ttt.unit)});
+    const unit = new_unit(@enumFromInt(sel));
+    try stdout.print("\nPlease enter a value in {s}: ", .{@tagName(unit.unit)});
 
     var input: [20]u8 = undefined;
     const in = try stdin.readUntilDelimiter(&input, '\n');
-    const pounds = try std.fmt.parseFloat(f32, in);
+    const in_val = try std.fmt.parseFloat(f32, in);
+    var out_val: f32 = undefined;
 
-    const kilos = pounds_to_kilos(pounds);
+    switch (unit.unit) {
+        Units.pounds => {
+            out_val = pounds_to_kilos(in_val);
+        },
+        Units.kilograms => {
+            out_val = kilos_to_pounds(in_val);
+        },
+        else => unreachable,
+    }
 
-    try stdout.print("\n{s}\n", .{ttt.symbol});
-    try stdout.print("\n{d} {s} = {d:.3} {s}\n", .{pounds, ttt.symbol, kilos, ttt.conv_symbol});
+    try stdout.print("\n{d} {s} = {d:.3} {s}\n", .{in_val, unit.symbol, out_val, unit.conv_symbol});
 }
 
 pub fn main() !void {
@@ -55,15 +77,16 @@ pub fn main() !void {
         \\Select the unit you want to convert:
         \\
         \\[1] - pounds to kilograms
+        \\[2] - kilograms to pounds
         \\
     });
 
     var input_unit: [3]u8 = undefined;
     const in_unit = try stdin.readUntilDelimiter(&input_unit, '\n');
-    const unit: u8 = try std.fmt.parseInt(u8, in_unit, 10);
+    const sel: u8 = try std.fmt.parseInt(u8, in_unit, 10);
 
-    if (unit < @intFromEnum(Units.max)) {
-        try convert (unit);
+    if (sel < @intFromEnum(Units.max)) {
+        try convert (sel);
     } 
 
     try stdout.print("{s}\n", .{"ByeBye!"});
