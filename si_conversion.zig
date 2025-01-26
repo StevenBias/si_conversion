@@ -9,9 +9,12 @@ pub fn main() !void {
     const stdout = std.io.getStdOut().writer();
     const stdin = std.io.getStdIn().reader();
 
-    // const args = try std.process.argsAlloc(std.heap.page_allocator);
-    // We can be sure our args' memory is freed when main is returned from
-    // defer std.process.argsFree(std.heap.page_allocator, args);
+    try stdout.print("{s}\n", .{
+        \\Select the unit you want to convert:
+        \\
+        \\[1] - pounds
+        \\
+    });
 
     // Do not forget the first argument is the program name
     // Ask for exactly one other arguments
