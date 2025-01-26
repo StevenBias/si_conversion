@@ -11,6 +11,7 @@ const Units = enum(u8) {
     kilograms = 2,
     fahrenheit = 3,
     celsius = 4,
+    feet = 5,
     max
 };
 
@@ -50,11 +51,23 @@ fn new_unit(unit: Units) Unit_t {
                 .conv_symbol = "°F",
             };
         },
+        Units.feet => {
+            return Unit_t {
+                .unit = unit,
+                .symbol = "ft",
+                .conv_symbol = "cm",
+            };
+        },
         else => unreachable,
     }
 }
 
 const lb_kg_conversion = 0.45359237;
+const ft_cm_conversion = 30.48;
+
+fn feet_to_centimeters(feet: f32) f32 {
+    return (feet * ft_cm_conversion) ;
+}
 
 fn celsius_to_fahrenheit(cels: f32) f32 {
     return (cels * (9.0 / 5.0) + 32) ;
@@ -100,6 +113,9 @@ fn convert(sel: u8) !void {
             Units.celsius => {
                 out_val = celsius_to_fahrenheit(in_val);
             },
+            Units.feet => {
+                out_val = feet_to_centimeters(in_val);
+            },
             else => unreachable,
         }
 
@@ -119,6 +135,7 @@ pub fn main() !void {
         \\[2] - kilograms to pounds
         \\[3] - fahrenheit to celsius
         \\[4] - celsius to fahrenheit
+        \\[5] - feet to centimer
         \\
     });
 
