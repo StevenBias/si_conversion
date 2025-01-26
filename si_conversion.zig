@@ -16,16 +16,23 @@ pub fn main() !void {
         \\
     });
 
-    // Do not forget the first argument is the program name
-    // Ask for exactly one other arguments
-    // if (args.len != 2) return error.ExpectedArgument;
+    var input_unit: [3]u8 = undefined;
+    const in_unit = try stdin.readUntilDelimiter(&input_unit, '\n');
+    const unit = try std.fmt.parseInt(u8, in_unit, 10);
 
-    try stdout.print("{s}\n", .{"Please enter a value pounds:"});
+    if(unit == 1) {
 
-    var input: [20]u8 = undefined;
-    const in = try stdin.readUntilDelimiter(&input, '\n');
-    const pounds = try std.fmt.parseFloat(f32, in);
-    const kilos = pounds_to_kilos(pounds);
+        try stdout.print("\n{s}\n", .{
+            "Please enter a value pounds:"
+        });
 
-    try stdout.print("{d} lb = {d:.2} kg\n", .{pounds, kilos});
+        var input: [20]u8 = undefined;
+        const in = try stdin.readUntilDelimiter(&input, '\n');
+        const pounds = try std.fmt.parseFloat(f32, in);
+        const kilos = pounds_to_kilos(pounds);
+
+        try stdout.print("{d} lb = {d:.2} kg\n", .{pounds, kilos});
+    } 
+
+    try stdout.print("{s}\n", .{"ByeBye!"});
 }
