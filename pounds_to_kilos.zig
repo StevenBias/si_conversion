@@ -9,8 +9,9 @@ pub fn main() !void {
     defer std.process.argsFree(std.heap.page_allocator, args);
 
     // Do not forget the first argument is the program name
-    // Ask for exactly two other arguments
-    if (args.len != 3) return error.ExpectedArgument;
+    // Ask for exactly one other arguments
+    if (args.len != 2) return error.ExpectedArgument;
 
-    try stdout.print("{s}, {s}!\n", .{args[1], args[2]});
+    const pounds = try std.fmt.parseFloat(f32, args[1]);
+    try stdout.print("{} lb\n", .{pounds});
 }
