@@ -15,6 +15,7 @@ const Units = enum(u8) {
     centimeters = 6,
     yards = 7,
     meters = 8,
+    miles = 9,
     max
 };
 
@@ -82,6 +83,13 @@ fn new_unit(unit: Units) Unit_t {
                 .conv_symbol = "yd",
             };
         },
+        Units.miles => {
+            return Unit_t {
+                .unit = unit,
+                .symbol = "mi",
+                .conv_symbol = "km",
+            };
+        },
         else => unreachable,
     }
 }
@@ -89,6 +97,11 @@ fn new_unit(unit: Units) Unit_t {
 const lb_kg_conversion = 0.45359237;
 const ft_cm_conversion = 30.48;
 const yt_m_conversion = 0.9144;
+const mi_km_conversion = 1.609344;
+
+fn miles_to_kilometers(miles: f32) f32 {
+    return (miles * mi_km_conversion);
+}
 
 fn meters_to_yards(meters: f32) f32 {
     return (meters / yt_m_conversion);
@@ -162,6 +175,9 @@ fn convert(sel: u8) !void {
             Units.meters => {
                 out_val = meters_to_yards(in_val);
             },
+            Units.miles => {
+                out_val = miles_to_kilometers(in_val);
+            },
             else => unreachable,
         }
 
@@ -185,6 +201,7 @@ pub fn main() !void {
         \\[6] - centimeters to feet
         \\[7] - yards to meters
         \\[8] - meters to yards
+        \\[9] - miles to kilometers
         \\
     });
 
