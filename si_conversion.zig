@@ -6,6 +6,7 @@ const floatMax = std.math.floatMax(f32);
 const stdout = std.io.getStdOut().writer();
 const stdin = std.io.getStdIn().reader();
 
+// zig fmt: off
 const Units = enum(u8) {
     pounds = 1,
     kilograms = 2,
@@ -19,6 +20,7 @@ const Units = enum(u8) {
     kilometers = 10,
     max
 };
+// zig fmt: on
 
 const Unit_t = struct {
     unit: Units,
@@ -27,72 +29,72 @@ const Unit_t = struct {
 };
 
 fn new_unit(unit: Units) Unit_t {
-    switch(unit) {
+    switch (unit) {
         Units.pounds => {
-            return Unit_t {
+            return Unit_t{
                 .unit = unit,
                 .symbol = "lb",
                 .conv_symbol = "kg",
             };
         },
         Units.kilograms => {
-            return Unit_t {
+            return Unit_t{
                 .unit = unit,
                 .symbol = "kg",
                 .conv_symbol = "lb",
             };
         },
         Units.fahrenheit => {
-            return Unit_t {
+            return Unit_t{
                 .unit = unit,
                 .symbol = "°F",
                 .conv_symbol = "°C",
             };
         },
         Units.celsius => {
-            return Unit_t {
+            return Unit_t{
                 .unit = unit,
                 .symbol = "°C",
                 .conv_symbol = "°F",
             };
         },
         Units.feet => {
-            return Unit_t {
+            return Unit_t{
                 .unit = unit,
                 .symbol = "ft",
                 .conv_symbol = "cm",
             };
         },
         Units.centimeters => {
-            return Unit_t {
+            return Unit_t{
                 .unit = unit,
                 .symbol = "cm",
                 .conv_symbol = "ft",
             };
         },
         Units.yards => {
-            return Unit_t {
+            return Unit_t{
                 .unit = unit,
                 .symbol = "yd",
                 .conv_symbol = "m",
             };
         },
         Units.meters => {
-            return Unit_t {
+            return Unit_t{
                 .unit = unit,
                 .symbol = "m",
                 .conv_symbol = "yd",
             };
         },
         Units.miles => {
-            return Unit_t {
+            return Unit_t{
                 .unit = unit,
                 .symbol = "mi",
                 .conv_symbol = "km",
             };
         },
         Units.kilometers => {
-            return Unit_t {
+            return Unit_t{
                 .unit = unit,
                 .symbol = "km",
                 .conv_symbol = "mi",
@@ -124,15 +126,15 @@ fn yards_to_meters(yards: f32) f32 {
 }
 
 fn centimeters_to_feet(centimeters: f32) f32 {
-    return (centimeters / ft_cm_conversion) ;
+    return (centimeters / ft_cm_conversion);
 }
 
 fn feet_to_centimeters(feet: f32) f32 {
-    return (feet * ft_cm_conversion) ;
+    return (feet * ft_cm_conversion);
 }
 
 fn celsius_to_fahrenheit(cels: f32) f32 {
-    return (cels * (9.0 / 5.0) + 32) ;
+    return (cels * (9.0 / 5.0) + 32);
 }
 
 fn fahrenheit_to_celsius(fahr: f32) f32 {
@@ -151,7 +153,6 @@ fn pounds_to_kilos(pounds: f32) f32 {
 //        the user, get the value to be converted, do the conversion and print
 //        the result
 fn convert(sel: u8) !void {
-
     const unit = new_unit(@enumFromInt(sel));
     try stdout.print("\nPlease enter a value in {s}: ", .{@tagName(unit.unit)});
 
@@ -195,13 +196,14 @@ fn convert(sel: u8) !void {
             },
             else => unreachable,
         }
-
-        try stdout.print("\n{d} {s} = {d:.3} {s}\n", .{in_val, unit.symbol, out_val, unit.conv_symbol});
-    } 
-    else {
+        // zig fmt: off
+        try stdout.print("\n{d} {s} = {d:.3} {s}\n", .{
+            in_val, unit.symbol, out_val, unit.conv_symbol
+        });
+        // zig fmt: on
+    } else {
         try stdout.print("{s}\n", .{"Sorry, invalid input."});
     }
-
 }
 
 pub fn main() !void {
@@ -226,9 +228,8 @@ pub fn main() !void {
     const sel: u8 = std.fmt.parseInt(u8, in_unit, 10) catch @intFromEnum(Units.max);
 
     if (sel > 0 and sel < @intFromEnum(Units.max)) {
-        try convert (sel);
-    } 
-    else {
+        try convert(sel);
+    } else {
         try stdout.print("{s}\n", .{"Sorry, invalid input."});
     }
 

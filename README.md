@@ -6,7 +6,7 @@ Small project to learn zig
 It does some conversion from weird imperial mesurement system to SI and
 vice-versa.
 
-*It works on zig version 0.13.0 on linux*
+*It works with zig version 0.13.0 on linux*
 
 ## Run
 ```
